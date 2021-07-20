@@ -70,6 +70,10 @@ form p {
   background-color: #eee8e8;
 }
 
+.table tr:hover {
+  background-color: #dbd5d5;
+}
+
 .table th,
 .table td {
   padding: 20px;

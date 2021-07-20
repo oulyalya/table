@@ -55,9 +55,7 @@ function renderSelectOptions(data) {
   data.forEach(element => {
     select.removeAttribute('disabled');
     select.value = 'default';
-    // if (!document.querySelector('#table') || document.querySelector('#table').classList.contains('hidden')) {
     document.querySelector('.output').textContent = 'No results, please choose another option';
-    // }
     let option = document.createElement('option');
     option.value = element;
     option.textContent = element;
@@ -78,23 +76,10 @@ radios.forEach(el => el.addEventListener('change', () => {
 
   if (document.querySelector('#radio1').checked) {
     renderSelectOptions(externalService.getRegionsList());
-    // document.querySelector('select').addEventListener('change', function () {
-    //   data = externalService.getCountryListByRegion(document.querySelector('select').value);
-    //   renderTable(data);
-    // });
-    // showByRegionshowByLanguage = !showByRegionshowByLanguage;
-    // showByRegion = !showByRegion;
     showByRegion = true;
     showByRegionshowByLanguage = false;
   } if (document.querySelector('#radio2').checked) {
     renderSelectOptions(externalService.getLanguagesList());
-    // document.querySelector('select').addEventListener('change', function () {
-    //   data = externalService.getCountryListByLanguage(document.querySelector('select').value);
-    //   renderTable(data);
-    // });
-    // showByRegionshowByLanguage = !showByRegionshowByLanguage;
-    // showByRegion = !showByRegion;
-
     showByRegion = false;
     showByRegionshowByLanguage = true;
 
@@ -123,11 +108,15 @@ function renderTable(data) {
     table.setAttribute('id', 'table');
     table.innerHTML = `
   <thead>
-    <th class="name">Country name</th>
+    <th class="name">Country name 
+      <button id="sort-by-name" type="button">&#x2195;</button>
+    </th>
     <th><p>Capital</p></th>
     <th>World Region</th>
     <th>Languages</th>
-    <th class="area">Area</th>
+    <th class="area">Area
+      <button id="sort-by-area" type="button">&#x2195;</button>
+    </th>
     <th>Flag</th>
   </thead>
   <tbody></tbody>
@@ -160,43 +149,50 @@ function renderTable(data) {
   });
 }
 
-
-
-// let sortByName = sortByField('name', document.querySelector('.name'));
-// let sortByArea = sortByField('area', document.querySelector('.area'));
-// nameBtn.addEventListener('click', sortByName);
-// areaBtn.addEventListener('click', sortByArea);
-
-
-
 function selectChangeHandler() {
   let countries = selectData();
   renderTable(countries);
 
-  let nameBtn = document.querySelector('.name');
+  let nameBtn = document.querySelector('#sort-by-name');
+  let areaBtn = document.querySelector('#sort-by-area');
 
-  let isOrdered = false;
+  let isOrderedByName = false;
+  let isOrderedByArea = false;
+
   nameBtn.addEventListener('click', (evt) => {
-
-    if (isOrdered) {
-      renderTable(countries.sort((a, b) => (a.name < b.name) ? -1 : 1));
+    if (isOrderedByName) {
+      let countries = selectData();
+      countries = countries.sort((a, b) => (a.name > b.name) ? 1 : -1).reverse();
+      renderTable(countries);
+      nameBtn.innerHTML = '&#8595;';
     } else {
-      renderTable(countries.sort((a, b) => (a.name > b.name) ? 1 : -1));
+      let countries = selectData();
+      countries = countries.sort((a, b) => (a.name < b.name) ? -1 : 1);
+      renderTable(countries);
+      nameBtn.innerHTML = '&#x2191;';
     }
-    isOrdered = !isOrdered;
+    isOrderedByName = !isOrderedByName;
+    isOrderedByArea = false;
+    areaBtn.innerHTML = '&#x2195;';
+  });
+
+  areaBtn.addEventListener('click', (evt) => {
+    if (isOrderedByArea) {
+      let countries = selectData();
+      countries = countries.sort((a, b) => (a.area > b.area) ? 1 : -1).reverse();
+      renderTable(countries);
+      areaBtn.innerHTML = '&#8595;';
+    } else {
+      let countries = selectData();
+      countries = countries.sort((a, b) => (a.area < b.area) ? -1 : 1);
+      renderTable(countries);
+      areaBtn.innerHTML = '&#x2191;';
+    }
+    isOrderedByArea = !isOrderedByArea;
+    isOrderedByName = false;
+    nameBtn.innerHTML = '&#x2195;';
   });
 }
 
 let select = document.querySelector('select');
 select.addEventListener('change', selectChangeHandler);
-
-
-// if (document.querySelector('.name')) {
-// let isOrdered = false;
-
-
-//   areaBtn.addEventListener('click', () => {
-//     data.sort((a, b) => (a.area > b.area) ? 1 : -1);
-//     renderTable(data);
-//   });
-// }
